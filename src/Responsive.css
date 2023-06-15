@@ -1,0 +1,6 @@
+/* CSS rules to apply when viewport width is 600px or less */
+@media screen and (max-width: 550px) {
+    .example-container {
+        height: 70vw;
+    }
+}
