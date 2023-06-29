@@ -11,12 +11,14 @@ import { motion } from "framer-motion"
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSelector, useDispatch } from 'react-redux';
-import FetchData from "../../../Util/Data/FetchData"
+import FetchData from "../../../Util/Data/FetchData";
 import PostData from '../../../Util/Data/PostData';
-import { getAuthor } from '../../../Redux/Author/AuthorActions'
+import { getAuthor } from '../../../Redux/Author/AuthorActions';
 import { transferFiles } from '../TransferFiles/transferFiles';
 import { storeDataInIndexedDB, retrieveDataFromIndexedDB } from '../StorePostData/indexedDB';
-import PostUploadingProgress from './PostUploadingProgress/PostUploadingProgress';
+import { transformedData } from './transformData';
+
+let hasRunDuringThisSession = false;
 
 const PostCreateBase = () => {
     /**Get the user */
@@ -25,7 +27,7 @@ const PostCreateBase = () => {
         FetchData("/api/users/author/").then((data) => {
             dispatch(getAuthor(data))
         })
-    }, [])
+    }, [dispatch])
 
     /**Page Author */
     const author = useSelector(state => state.Author.Author)
@@ -33,6 +35,7 @@ const PostCreateBase = () => {
     const [TextAreaFocused, setTextAreaFocused] = useState(false);
     const [LoadingData, setLoadingData] = useState(false);
     const [UploadingPost, setUploadingPost] = useState(false);
+    const [Progress, setProgress] = useState(0)
 
 
     /**Post content */
@@ -53,15 +56,40 @@ const PostCreateBase = () => {
         }
     }, [author]);
 
+    useEffect(() => {
+        retrieveDataFromIndexedDB()
+            .then((data) => {
+                if (data.length) {
+                    setProgress(20)
+                    setUploadingPost(true)
+                } else {
+                    setUploadingPost(false)
+                }
+            })
+    }, []);
+
 
     /**Check if any post in the indexedDB */
-    retrieveDataFromIndexedDB()
-        .then((data) => {
-            console.log(data);
-            if (data.length) {
-                setUploadingPost(true)
-            }
-        })
+    useEffect(() => {
+        if (!hasRunDuringThisSession) {
+            retrieveDataFromIndexedDB()
+                .then((data) => {
+                    if (data.length) {
+                        // Run transferFiles in the background
+                        setTimeout(() => {
+                            transferFiles(setProgress)
+                                .then(() => {
+                                    setUploadingPost(false)
+                                })
+                                .catch((error) => {
+                                    // Handle any errors that occurred during the transfer
+                                });
+                        }, 0);
+                    }
+                })
+            hasRunDuringThisSession = true;
+        }
+    }, []);
 
 
     /**Create post */
@@ -73,20 +101,30 @@ const PostCreateBase = () => {
             "POST",
             "/api/posts/post/create/",
             JSON.stringify(PostContent)
-        ).then((data) => {
+        ).then(async (data) => {
             if (data.message === "Post created successfully") {
+                /**Clear media input */
+                const mediaField = document.querySelector(".media-fields")
+                mediaField.value = ''
+                
                 setUploadingPost(true)
 
+                /**Save it in a way that is uploadable even after refresh */
+                const transformedFiles = await transformedData(
+                    PostContent.mediaFiles,
+                    data.post_id,
+                    author.username
+                );
+
+                /**Save data in indexedDB */
                 const mediaData = [
-                    { id: 1, files: PostContent.mediaFiles },
+                    { id: 1, files: transformedFiles },
                     { id: 2, post_id: data.post_id },
                     { id: 3, author_username: author.username },
                 ];
-
-                /**Save data in indexedDB */
                 storeDataInIndexedDB(mediaData)
 
-                /**Clear the mediastate */
+                /**Clear the Mediastate */
                 setPostContent((prevState) => ({
                     ...prevState,
                     description: "",
@@ -95,9 +133,8 @@ const PostCreateBase = () => {
 
                 // Run transferFiles in the background
                 setTimeout(() => {
-                    transferFiles()
+                    transferFiles(setProgress)
                         .then(() => {
-                            console.log("set to false");
                             setUploadingPost(false)
                         })
                         .catch((error) => {
@@ -242,7 +279,7 @@ const PostCreateBase = () => {
                             closed: { opacity: 0, height: 0 },
                         }}
                     >
-                        <PostUploadingProgress />
+                        
                     </motion.div> :
                     <Box></Box>
             }

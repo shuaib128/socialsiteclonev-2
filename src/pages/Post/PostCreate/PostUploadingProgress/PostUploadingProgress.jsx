@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import LinearWithValueLabel from './Progress'
 import ButtonOutLine from '../../../../Components/Buttons/ButtonOutLine';
 
-const PostUploadingProgress = () => {
+const PostUploadingProgress = ({Progress}) => {
     const cancelButtonHandler = () => {
         console.log('send post')
     }
@@ -26,7 +26,7 @@ const PostUploadingProgress = () => {
                     }}
                 >
                     <LinearWithValueLabel
-                        Progress={20}
+                        Progress={Progress}
                     />
 
                     <Box sx={{ width: "100px", mt: "-10px" }}>

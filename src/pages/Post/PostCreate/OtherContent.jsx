@@ -22,6 +22,7 @@ const OtherContent = (props) => {
                 }}
             >
                 <input
+                    className='media-fields'
                     type="file"
                     accept="image/*, video/*"
                     multiple

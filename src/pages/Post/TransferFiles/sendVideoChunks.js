@@ -1,19 +1,22 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { BackendLink } from "../../../Util/BackEndLink";
 import PostData from "../../../Util/Data/PostData";
+import { modifyDataToIndexedDB } from "../StorePostData/indexedDB";
+import PostUploadingProgress from '../PostCreate/PostUploadingProgress/PostUploadingProgress';
 
-export const sendVideoChunks = async (username, postID, resolve, file) => {
-    const CHUNK_SIZE = 1024 * 1024; // 1MB
-    const SIZE = file.size;
-    const NUM_CHUNKS = Math.floor(SIZE / CHUNK_SIZE) + 1;
-    let start = 0;
-    let end = CHUNK_SIZE;
-    let uploadedChunks = 0;
-    const currentDate = new Date().toLocaleString();
-    const randomString = [...Array(10)].map(() => Math.random().toString(36)[2]).join('');
-    const filename = `${postID}-${username}-${currentDate}-${randomString}-${file.name}`
+/**
+ * Sends video chunks to the backend server for uploading.
+ * @param {string} postID - The ID of the post.
+ * @param {function} resolve - The function to call when all chunks are uploaded.
+ * @param {object} file - The file containing the video chunks and metadata.
+ */
+export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progressTracker, setProgress) => {
+    const videoChunks = file.videoChunks;
+    const filename = file.filename;
 
-    for (let i = 0; i < NUM_CHUNKS; i++) {
-        const chunk = file.slice(start, end);
+    for (let i = 0; i < videoChunks.length; i++) {
+        const chunk = videoChunks[i].chunk;
         const formData = new FormData();
         formData.append('filename', filename);
         formData.append('chunk', chunk);
@@ -25,40 +28,53 @@ export const sendVideoChunks = async (username, postID, resolve, file) => {
             });
 
             if (!response.ok) {
-                // Handle error response
                 throw new Error('Chunk upload failed');
-            }
+            } else {
+                videoChunks.splice(i, 1);
+                i--;
 
-            uploadedChunks++;
+                modifyDataToIndexedDB(mediaFiles);
 
-            /**Trigger after alll the chunk has been pushed and saved */
-            if (uploadedChunks === NUM_CHUNKS) {
-                // All chunks uploaded successfully
-                const finalResponse = await response.json();
-
-                const DATA = {
-                    postID: postID,
-                    videoID: finalResponse.id
-                }
+                // After successfully uploading a chunk, update the progress
+                progressTracker.uploadedFiles++;
+                progressTracker.progressPercentage = (progressTracker.uploadedFiles / progressTracker.totalFiles) * 100;
                 
-                PostData(
-                    "POST",
-                    "/api/posts/post/add/media/video/finalize/",
-                    JSON.stringify(DATA)
-                )
-              }
-            
+                /**Set progress for progress tracker */
+                setProgress(progressTracker.progressPercentage)
+
+                // Select the div element where you want to render the component
+                const container = document.querySelector('.post-progress');
+
+                // Check if the container element exists
+                if (container) {
+                    const root = createRoot(container);
+                    root.render(<PostUploadingProgress Progress={progressTracker.progressPercentage} />);
+                } else {
+                    console.error('Container element not found in the DOM.');
+                }
+
+                if (videoChunks.length === 0) {
+                    const finalResponse = await response.json();
+
+                    const DATA = {
+                        postID: postID,
+                        videoID: finalResponse.id
+                    };
+
+                    PostData(
+                        "POST",
+                        "/api/posts/post/add/media/video/finalize/",
+                        JSON.stringify(DATA)
+                    );
+                }
+            }
+            console.log(progressTracker.progressPercentage);
         } catch (error) {
-            // Handle error
             console.error(error);
             return;
         }
-
-        start = end;
-        end = start + CHUNK_SIZE;
     }
 
-    // All chunks uploaded successfully
     console.log('File upload complete');
     resolve();
-}
+};

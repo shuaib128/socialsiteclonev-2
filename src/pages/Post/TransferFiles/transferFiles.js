@@ -1,68 +1,89 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import PostData from "../../../Util/Data/PostData";
-import { resizeImageFile } from "../../../Util/Compression/imageCompress";
-import { imageOrVideo } from "../../../Util/ImageOrVideo/ImageOrVideo";
 import { sendVideoChunks } from "./sendVideoChunks";
-import { retrieveDataFromIndexedDB, clearDataFromIndexedDB } from "../StorePostData/indexedDB";
+import PostUploadingProgress from '../PostCreate/PostUploadingProgress/PostUploadingProgress';
+import {
+    retrieveDataFromIndexedDB,
+    clearDataFromIndexedDB,
+    modifyDataToIndexedDB
+} from "../StorePostData/indexedDB";
 
-export const transferFiles = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const data = await retrieveDataFromIndexedDB();
-            const mediaFiles = data[0].files;
-            const postID = data[1].post_id;
-            const username = data[2].author_username;
+// Initialize progress tracker
+let progressTracker = {
+    totalFiles: 0,
+    uploadedFiles: 0,
+    progressPercentage: 0
+};
 
-            const uploadMediaFile = async (file, index) => {
-                if (index >= mediaFiles.length) {
-                    clearDataFromIndexedDB();
-                    resolve();
-                    return;
+export const transferFiles = async (setProgress) => {
+    try {
+        const data = await retrieveDataFromIndexedDB();
+        const mediaFiles = data[0].files;
+        const postID = data[1].post_id;
+        const promises = [];
+
+        mediaFiles.forEach(file => {
+            progressTracker.totalFiles += file.type === "vid" ? file.videoChunks.length : 1;
+        });
+
+        for (let index = 0; index < mediaFiles.length; index++) {
+            const file = mediaFiles[index];
+
+            if (file.type === "img") {
+                const Data = {
+                    postID: postID,
+                    imageBase64: file.dataUrl,
+                };
+
+                try {
+                    const response = await PostData(
+                        "POST",
+                        "/api/posts/post/add/media/image/",
+                        JSON.stringify(Data)
+                    );
+                    console.log(response);
+
+                    // After successfully uploading an image, update the progress
+                    progressTracker.uploadedFiles++;
+                    progressTracker.progressPercentage = (progressTracker.uploadedFiles / progressTracker.totalFiles) * 100;
+
+                    /**Set progress for progress tracker */
+                    setProgress(progressTracker.progressPercentage)
+
+                } catch (error) {
+                    console.error(error);
+                    throw error;
                 }
 
-                if (imageOrVideo(file.name) === "image") {
-                    try {
-                        const resizedFile = await resizeImageFile(file, 840, 680);
-                        const fileReader = new FileReader();
+                mediaFiles.splice(index, 1);
+                index--;
+                modifyDataToIndexedDB(mediaFiles);
 
-                        fileReader.readAsDataURL(resizedFile);
+                // Select the div element where you want to render the component
+                const container = document.querySelector('.post-progress');
 
-                        fileReader.addEventListener("load", async (event) => {
-                            const dataUrl = event.target.result;
-                            const Data = {
-                                postID: postID,
-                                imageBase64: dataUrl,
-                            };
-
-                            try {
-                                const response = await PostData(
-                                    "POST",
-                                    "/api/posts/post/add/media/image/",
-                                    JSON.stringify(Data)
-                                );
-
-                                uploadMediaFile(mediaFiles[index + 1], index + 1);
-                            } catch (error) {
-                                console.error(error);
-                                reject(error);
-                            }
-                        });
-                    } catch (error) {
-                        console.error(error);
-                        reject(error);
-                    }
-                } else if (imageOrVideo(file.name) === "video") {
-                    await new Promise((resolve) => {
-                        sendVideoChunks(username, postID, resolve, file);
-                    });
-
-                    uploadMediaFile(mediaFiles[index + 1], index + 1);
+                // Check if the container element exists
+                if (container) {
+                    const root = createRoot(container);
+                    root.render(<PostUploadingProgress Progress={progressTracker.progressPercentage} />);
+                } else {
+                    console.error('Container element not found in the DOM.');
                 }
-            };
-
-            await uploadMediaFile(mediaFiles[0], 0);
-        } catch (error) {
-            console.error('Data retrieval error:', error);
-            reject(error);
+            } else if (file.type === "vid") {
+                promises.push(
+                    new Promise((resolve) => {
+                        sendVideoChunks(postID, resolve, file, mediaFiles, progressTracker, setProgress);
+                    })
+                );
+            }
         }
-    });
+
+        await Promise.all(promises);
+        await clearDataFromIndexedDB();
+        return;
+    } catch (error) {
+        console.error("Data retrieval error:", error);
+        throw error;
+    }
 };

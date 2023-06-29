@@ -54,6 +54,7 @@ const SignUpPage = () => {
             fetch(`${BackendLink}/api/users/user/register/`, requestOptions)
                 .then(response => response.text())
                 .then(result => {
+                    console.log(result);
                     resolve(result);
                 })
                 .catch(error => {

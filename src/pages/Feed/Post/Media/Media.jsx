@@ -30,7 +30,7 @@ const Media = (props) => {
                     }}
                 >
                     <ImageOrVideo
-                        File={media[0].file}
+                        File={media[0]}
                         Width="100%"
                         Height="100%"
                     />
@@ -47,7 +47,7 @@ const Media = (props) => {
                             return (
                                 <ImageOrVideo
                                     key={media.id}
-                                    File={media.file}
+                                    File={media}
                                     Width='49%'
                                     Height="100%"
                                 />
@@ -73,7 +73,7 @@ const Media = (props) => {
                                     return (
                                         <ImageOrVideo
                                             key={media.id}
-                                            File={media.file}
+                                            File={media}
                                             Width='100%'
                                             Height="250px"
                                         />
@@ -93,7 +93,7 @@ const Media = (props) => {
                                     return (
                                         <ImageOrVideo
                                             key={media.id}
-                                            File={media.file}
+                                            File={media}
                                             Width='100%'
                                             Height="163px"
                                         />
@@ -120,7 +120,7 @@ const Media = (props) => {
                                     return (
                                         <ImageOrVideo
                                             key={media.id}
-                                            File={media.file}
+                                            File={media}
                                             Width='100%'
                                             Height="250px"
                                         />
@@ -140,7 +140,7 @@ const Media = (props) => {
                                     return (
                                         <ImageOrVideo
                                             key={media.id}
-                                            File={media.file}
+                                            File={media}
                                             Width='100%'
                                             Height="163px"
                                         />
@@ -152,7 +152,7 @@ const Media = (props) => {
                                     }}
                                 >
                                     <ImageOrVideo
-                                        File={media[0].file}
+                                        File={media[0]}
                                         Width="100%"
                                         Height="163px"
                                     />

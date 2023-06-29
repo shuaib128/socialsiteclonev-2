@@ -33,9 +33,7 @@ export const storeDataInIndexedDB = async (data) => {
             objectStore.add(item);
         }
 
-        transaction.oncomplete = () => {
-            console.log('Data stored successfully');
-        };
+        transaction.oncomplete = () => {};
     } catch (error) {
         console.error('Data storage error:', error);
     }
@@ -67,6 +65,38 @@ export const retrieveDataFromIndexedDB = async () => {
     });
 };
 
+export const modifyDataToIndexedDB = async (data) => {
+    const db = await openDatabase();
+
+    // Start a transaction and get a reference to the object store
+    const transaction = db.transaction(objectStoreName, 'readwrite');
+    const objectStore = transaction.objectStore(objectStoreName);
+
+    // Retrieve the object to update using the specified key
+    const getObjectRequest = objectStore.get(1);
+
+    getObjectRequest.onerror = (event) => {
+        console.error('Failed to retrieve object:', event.target.error);
+    };
+
+    getObjectRequest.onsuccess = (event) => {
+        // Get the retrieved object
+        const objectToUpdate = event.target.result;
+
+        // Add a new array to the object
+        objectToUpdate.files = data
+
+        // Update the object in the object store
+        const updateObjectRequest = objectStore.put(objectToUpdate);
+
+        updateObjectRequest.onerror = (event) => {
+            console.error('Failed to update object:', event.target.error);
+        };
+
+        updateObjectRequest.onsuccess = (event) => {};
+    }
+}
+
 export const clearDataFromIndexedDB = async () => {
     try {
         const db = await openDatabase();
@@ -74,9 +104,7 @@ export const clearDataFromIndexedDB = async () => {
         const objectStore = transaction.objectStore(objectStoreName);
         const request = objectStore.clear();
 
-        request.onsuccess = () => {
-            console.log('Data cleared successfully');
-        };
+        request.onsuccess = () => {};
     } catch (error) {
         console.error('Data clearing error:', error);
     }
