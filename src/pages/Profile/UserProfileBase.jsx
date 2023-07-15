@@ -10,39 +10,34 @@ import FetchData from '../../Util/Data/FetchData';
 import ProfileInfoBase from './ProfileInfo/ProfileInfoBase';
 import PostBase from '../Feed/Post/PostBase';
 import { PostsSocket } from '../../Util/Socket/PostsSocket';
-import { useParams } from 'react-router-dom';
 import FilterBase from './PostFilter/FilterBase';
 
-const ProfileBase = () => {
-    const { id } = useParams();
-    const [Author, setAuthor] = useState("")
+const UserProfileBase = () => {
     const [Posts, setPosts] = useState({})
     const author = useSelector(state => state.Author.Author)
 
     useEffect(() => {
-        FetchData(`/api/users/user/${id}/`).then((data) => {
-            setAuthor(data)
-        })
+        if (author.id) {
+            FetchData(`/api/users/user/posts/${author.id}/`).then((data) => {
+                /**
+                * Transfer the data array to objetct.
+                * post_id: {Post}
+                * For better finging the post
+                */
+                let postsObject = {}
 
-        FetchData(`/api/users/user/posts/${id}/`).then((data) => {
-            /**
-            * Transfer the data array to objetct.
-            * post_id: {Post}
-            * For better finging the post
-            */
-            let postsObject = {}
-
-            data.forEach(post => {
-                postsObject[post.id] = post;
+                data.forEach(post => {
+                    postsObject[post.id] = post;
+                })
+                setPosts(prevPosts => ({ ...prevPosts, ...postsObject }));
             })
-            setPosts(prevPosts => ({ ...prevPosts, ...postsObject }));
-        })
+        }
     }, [author])
 
     /**Get the socket */
     useEffect(() => {
         PostsSocket(setPosts)
-    }, [Author])
+    }, [author])
 
 
     return (
@@ -63,12 +58,11 @@ const ProfileBase = () => {
                 }}
             >
                 <CoverImageBase
-                    Author={Author}
-                    CoverImage={Author.cover_image}
+                    Author={author}
+                    CoverImage={author.cover_image}
                 />
                 <ProfileImageBase
-                    Author={Author}
-                    setAuthor={setAuthor}
+                    Author={author}
                 />
 
                 <Box
@@ -83,7 +77,7 @@ const ProfileBase = () => {
                         }}
                     >
                         <ProfileInfoBase
-                            Author={Author}
+                            Author={author}
                         />
                     </Box>
 
@@ -99,7 +93,7 @@ const ProfileBase = () => {
                                 <PostBase
                                     key={index}
                                     Post={post}
-                                    Author={Author}
+                                    Author={author}
                                 />
                             )
                         })}
@@ -110,4 +104,4 @@ const ProfileBase = () => {
     )
 }
 
-export default ProfileBase
+export default UserProfileBase

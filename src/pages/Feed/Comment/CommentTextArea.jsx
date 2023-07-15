@@ -4,13 +4,42 @@ import ButtonOutLine from "../../../Components/Buttons/ButtonOutLine"
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import InsertEmoticonOutlinedIcon from '@mui/icons-material/InsertEmoticonOutlined';
 import IconButton from '@mui/material/IconButton';
+import PostData from '../../../Util/Data/PostData';
+import { useSelector } from 'react-redux';
 
-const CommentTextArea = () => {
+const CommentTextArea = (props) => {
     const [LoadingData, setLoadingData] = useState(false)
+    const [CommentContent, setCommentContent] = useState("")
+    /**Page Author */
+    const author = useSelector(state => state.Author.Author)
 
+    const scrollToBottom = () => {
+        const commentContainer = document.querySelector(`.comment-main-${props.ID.id}`);
+        if (commentContainer) {
+            commentContainer.scrollTop = commentContainer.scrollHeight;
+        }
+    };
     /**Submit comment */
     const submitComment = () => {
+        setLoadingData(true)
 
+        const DATA = {
+            postID: props.Post.id,
+            commentID: props.ID.id,
+            authorID: author.id,
+            commentContent: CommentContent
+        }
+
+        /**Send comment to backend */
+        PostData(
+            "POST",
+            props.SubmitPath,
+            JSON.stringify(DATA)
+        ).then((data) => {
+            setCommentContent("")
+            scrollToBottom();
+            setLoadingData(false)
+        })
     }
 
     return (
@@ -22,7 +51,10 @@ const CommentTextArea = () => {
             }}
         >
             <textarea
-                placeholder='Write a comment!'
+                className={`comment-textarea-${props.ID.id}`}
+                value={CommentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder={props.PlaceholderText}
                 style={{
                     width: "100%",
                     height: "70%",
@@ -58,9 +90,9 @@ const CommentTextArea = () => {
                     <InsertEmoticonOutlinedIcon />
                 </IconButton>
 
-                <Box width="150px">
+                <Box width="160px">
                     <ButtonOutLine
-                        ButtonText="Post Comment"
+                        ButtonText={props.ButtonText}
                         ButtonHeight="40px"
                         OnClickHandler={submitComment}
                         varient="contained"

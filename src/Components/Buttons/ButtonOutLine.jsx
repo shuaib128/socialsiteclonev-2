@@ -16,6 +16,7 @@ const ButtonOutLine = ({
         <Box>
             {!IsLoading ?
                 <Button
+                    className="main-button"
                     variant={varient}
                     fullWidth
                     disabled={IsDesabled}
@@ -40,7 +41,7 @@ const ButtonOutLine = ({
                     sx={{
                         display: "block",
                         margin: "0 auto",
-                        marginTop: "15px",
+                        marginTop: "0px",
                         height: ButtonHeight
                     }}
                 >

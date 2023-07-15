@@ -4,8 +4,29 @@ import CommentHeader from './CommentHeader';
 import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import { useSelector } from 'react-redux';
+import PostData from '../../../Util/Data/PostData';
 
-const Reply = () => {
+const Reply = ({ Post, Reply }) => {
+    const Likes = Reply.likes
+    const author = useSelector(state => state.Author.Author)
+    const color = Likes.some((like) => like.id === author.id) ? "#d10709" : "#888da8";
+
+    const DATA = {
+        postID: Post.id,
+        commentID: Reply.id,
+        authorID: author.id,
+    };
+
+    /**hndle the submit for the like button */
+    const likeButtonClickHandler = () => {
+        PostData(
+            "POST",
+            "/api/posts/post/add/reply/like/",
+            JSON.stringify(DATA)
+        ).then((data) => { })
+    }
     return (
         <Box
             sx={{
@@ -13,7 +34,9 @@ const Reply = () => {
                 paddingRight: "10px"
             }}
         >
-            <CommentHeader />
+            <CommentHeader
+                Asset={Reply}
+            />
 
             <Box
                 className="comment-content"
@@ -31,9 +54,7 @@ const Reply = () => {
                     mb="0"
                     lineHeight="1.5"
                 >
-                    Yesterday with @Karen Miller and @Marvin Stemperd at
-                    the #Rock'n'Rolla concert in LA. Was totally fantastic!
-                    People were really excited about this one!
+                    {Reply.reply}
                 </Typography>
 
                 <Box
@@ -41,7 +62,6 @@ const Reply = () => {
                         display: "flex",
                         alignItems: "center",
                         gap: "10px",
-                        // mt: "8px"
                     }}
                 >
                     <Box
@@ -50,12 +70,23 @@ const Reply = () => {
                             alignItems: "center"
                         }}
                     >
-                        <FavoriteIcon
+                        <IconButton
+                            onClick={() => likeButtonClickHandler()}
+                            type="button"
                             sx={{
-                                color: "#888da8",
-                                fontSize: "20px"
+                                color: "#757a91",
+                                transition: "all .3s",
+                                borderRadius: "50%",
+                                color: "white",
                             }}
-                        />
+                        >
+                            <FavoriteIcon
+                                sx={{
+                                    color: { color },
+                                    fontSize: "20px"
+                                }}
+                            />
+                        </IconButton>
                         <Typography
                             variant="subtitle1"
                             gutterBottom
@@ -66,7 +97,7 @@ const Reply = () => {
                             ml="5px"
                             lineHeight="1.5"
                         >
-                            9
+                            {Likes.length}
                         </Typography>
                     </Box>
 

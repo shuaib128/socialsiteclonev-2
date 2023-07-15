@@ -56,7 +56,6 @@ const PassBlock = ({
             })
             .catch(error => {
                 // Handle error
-                console.log(error);
                 setIsSignedUp(false)
             });
     }
@@ -143,7 +142,7 @@ const PassBlock = ({
                             marginTop: "10px",
                         }}
                     >
-                        This is a warning alert — check it out!
+                        User Name already exists!
                     </Alert> :
                     <Box></Box>
                 }

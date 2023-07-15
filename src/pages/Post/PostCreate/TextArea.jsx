@@ -1,6 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
+import { BackendLink } from '../../../Util/BackEndLink';
 
 const TextArea = (props) => {
     return (
@@ -17,7 +18,7 @@ const TextArea = (props) => {
                     height: "45px",
                 }}
                 alt="Remy Sharp"
-                src="https://friendkit.cssninja.io/assets/img/avatars/jenna.png"
+                src={BackendLink + props.Profile_Pic}
             />
 
             <textarea

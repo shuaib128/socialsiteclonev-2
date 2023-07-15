@@ -7,7 +7,6 @@ import ButtonOutLine from '../../../../Components/Buttons/ButtonOutLine';
 
 const PostUploadingProgress = ({Progress}) => {
     const cancelButtonHandler = () => {
-        console.log('send post')
     }
 
     return (

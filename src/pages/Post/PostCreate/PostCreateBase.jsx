@@ -45,6 +45,8 @@ const PostCreateBase = () => {
         mediaFiles: []
     })
 
+    console.log(PostContent);
+
 
     /**Update the username */
     useEffect(() => {
@@ -106,7 +108,7 @@ const PostCreateBase = () => {
                 /**Clear media input */
                 const mediaField = document.querySelector(".media-fields")
                 mediaField.value = ''
-                
+
                 setUploadingPost(true)
 
                 /**Save it in a way that is uploadable even after refresh */
@@ -231,6 +233,7 @@ const PostCreateBase = () => {
                     }}
                 >
                     <TextArea
+                        Profile_Pic={author.profile_picture}
                         PostContent={PostContent}
                         setPostContent={setPostContent}
                         setTextAreaFocused={setTextAreaFocused}
@@ -279,7 +282,7 @@ const PostCreateBase = () => {
                             closed: { opacity: 0, height: 0 },
                         }}
                     >
-                        
+
                     </motion.div> :
                     <Box></Box>
             }

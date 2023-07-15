@@ -61,7 +61,15 @@ const Header = () => {
                             alignItems: "center"
                         }}
                     >
-                        <Link to="/">
+                        <Link
+                            to="/"
+                            onClick={() => {
+                                window.scrollTo({
+                                    top: 0,
+                                    behavior: 'smooth'
+                                });
+                            }}
+                        >
                             <img
                                 src="/Images/logo.svg"
                                 alt="logo"

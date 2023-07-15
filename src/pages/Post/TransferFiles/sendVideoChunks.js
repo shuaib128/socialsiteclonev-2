@@ -4,6 +4,7 @@ import { BackendLink } from "../../../Util/BackEndLink";
 import PostData from "../../../Util/Data/PostData";
 import { modifyDataToIndexedDB } from "../StorePostData/indexedDB";
 import PostUploadingProgress from '../PostCreate/PostUploadingProgress/PostUploadingProgress';
+import { GetToken } from '../../../Util/Token/GetToken';
 
 /**
  * Sends video chunks to the backend server for uploading.
@@ -22,9 +23,13 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
         formData.append('chunk', chunk);
 
         try {
+            const accessToken = GetToken().accessToken;
             const response = await fetch(`${BackendLink}/api/posts/post/add/media/video/`, {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
             });
 
             if (!response.ok) {
@@ -38,7 +43,7 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
                 // After successfully uploading a chunk, update the progress
                 progressTracker.uploadedFiles++;
                 progressTracker.progressPercentage = (progressTracker.uploadedFiles / progressTracker.totalFiles) * 100;
-                
+
                 /**Set progress for progress tracker */
                 setProgress(progressTracker.progressPercentage)
 
@@ -68,13 +73,10 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
                     );
                 }
             }
-            console.log(progressTracker.progressPercentage);
         } catch (error) {
             console.error(error);
             return;
         }
     }
-
-    console.log('File upload complete');
     resolve();
 };

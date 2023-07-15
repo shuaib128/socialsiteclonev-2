@@ -9,16 +9,34 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { BackendLink } from '../../../Util/BackEndLink';
 import { dateTime } from '../../../Util/Date/DateTime';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export default function PostHeader(props) {
+    const Author = props.Post.auhtor
+    const navigate = useNavigate()
+    const author = useSelector(state => state.Author.Author)
+    const isAuthor = author.id === Author.id
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const userNameClickHandler = () => {
+        navigate(`/profile/${Author.id}`)
+    }
+
+    /**Handle edit post button click */
+    const editPostButtonHandler = (postId) => {
+        setAnchorEl(null);
+
+        navigate(`/post/edit/${postId}`)
+    }
 
     return (
         <Box
@@ -42,13 +60,14 @@ export default function PostHeader(props) {
                         height: "55px",
                     }}
                     alt="Remy Sharp"
-                    src={BackendLink + props.Author.profile_picture}
+                    src={BackendLink + Author.profile_picture}
                 />
 
                 <Box
                     sx={{
                         marginLeft: "11px"
                     }}
+                    onClick={() => userNameClickHandler()}
                 >
                     <Typography
                         variant="subtitle1"
@@ -59,7 +78,7 @@ export default function PostHeader(props) {
                         mb="0"
                         lineHeight={1}
                     >
-                        {props.Author.firstname} {props.Author.lastname}
+                        {Author.firstname} {Author.lastname}
                     </Typography>
 
                     <Typography
@@ -70,7 +89,7 @@ export default function PostHeader(props) {
                         textAlign="left"
                         mb="0"
                     >
-                        @{props.Author.username}
+                        @{Author.username}
                     </Typography>
 
                     <Typography
@@ -108,9 +127,12 @@ export default function PostHeader(props) {
                 onClose={handleClose}
                 TransitionComponent={Fade}
             >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                {isAuthor ?
+                    <MenuItem onClick={() => editPostButtonHandler(props.Post.id)}>Edit Post</MenuItem> :
+                    ""
+                }
+                <MenuItem onClick={handleClose}>Archive</MenuItem>
+                <MenuItem onClick={handleClose}>Share</MenuItem>
             </Menu>
         </Box>
     );

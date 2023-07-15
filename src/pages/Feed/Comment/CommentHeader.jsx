@@ -7,8 +7,10 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
+import { BackendLink } from '../../../Util/BackEndLink';
+import { dateTime } from '../../../Util/Date/DateTime';
 
-export default function CommentHeader() {
+export default function CommentHeader({ Asset }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -40,7 +42,7 @@ export default function CommentHeader() {
                         height: "45px",
                     }}
                     alt="Remy Sharp"
-                    src="https://friendkit.cssninja.io/assets/img/avatars/jenna.png"
+                    src={BackendLink + Asset.author.profile_picture}
                 />
 
                 <Box
@@ -56,7 +58,7 @@ export default function CommentHeader() {
                         textAlign="left"
                         mb="0"
                     >
-                        Dan Walker
+                        {Asset.author.firstname} {Asset.author.lastname}
                     </Typography>
 
                     <Typography
@@ -67,7 +69,7 @@ export default function CommentHeader() {
                         textAlign="left"
                         mb="0"
                     >
-                        July 26 2018, 01:03pm
+                        {dateTime(Asset.pub_date)}
                     </Typography>
                 </Box>
             </Box>

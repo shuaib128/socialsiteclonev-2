@@ -16,7 +16,6 @@ export const GetToken = () => {
             refreshToken: decryptedRefreshToken
         }
     } catch (error) {
-        window.location.replace('/signin');
         return {
             accessToken: "decryptedAccessToken",
             refreshToken: "decryptedRefreshToken"

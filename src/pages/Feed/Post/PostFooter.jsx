@@ -6,9 +6,11 @@ import LinkIcon from '@mui/icons-material/Link';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useWindowWidth } from '../../../Util/ScreenWidth/ScreenSize';
+import { BackendLink } from '../../../Util/BackEndLink';
 
-const PostFooter = () => {
+const PostFooter = (props) => {
     let screenWidth = useWindowWidth()
+    let Likes = props.Likes
 
     return (
         <Box
@@ -19,132 +21,92 @@ const PostFooter = () => {
                 justifyContent: "space-between"
             }}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center"
-                }}
-            >
-                {screenWidth > 500 ?
-                    <Box
-                        sx={{
-                            display: "grid",
-                            gridTemplateColumns: "30px 30px 30px 30px 30px"
-                        }}
-                    >
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/jenna.png"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/mike.jpg"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/daniel.jpg"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/elise.jpg"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/david.jpg"
-                        />
-                    </Box> :
-                    <Box
-                        sx={{
-                            display: "grid",
-                            gridTemplateColumns: "30px 30px 30px 30px 30px"
-                        }}
-                    >
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/jenna.png"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/mike.jpg"
-                        />
-                        <Avatar
-                            sx={{
-                                width: "35px",
-                                height: "35px",
-                                border: "4px solid white"
-                            }}
-                            alt="Remy Sharp"
-                            src="https://friendkit.cssninja.io/assets/img/avatars/daniel.jpg"
-                        />
-                    </Box>
-                }
-
+            {Likes.length >= 6 ?
                 <Box
                     sx={{
-                        ml: "23px",
-                        display: ["none", "none", "none", "block"]
+                        display: "flex",
+                        alignItems: "center"
                     }}
                 >
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        fontSize="15px"
-                        color="black"
-                        textAlign="left"
-                        mb="0"
-                        lineHeight="1.5"
-                        fontWeight="700"
+                    {screenWidth > 500 ?
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: "30px 30px 30px 30px 30px"
+                            }}
+                        >
+                            {Likes.slice(0, 5).map((like, _) => {
+                                return (
+                                    <Avatar
+                                        key={like.id}
+                                        sx={{
+                                            width: "35px",
+                                            height: "35px",
+                                            border: "4px solid white"
+                                        }}
+                                        alt="Remy Sharp"
+                                        src={BackendLink + like.profile_picture}
+                                    />
+                                )
+                            })}
+                        </Box> :
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: "30px 30px 30px 30px 30px"
+                            }}
+                        >
+                            {Likes.slice(0, 3).map((like, _) => {
+                                return (
+                                    <Avatar
+                                        key={like.id}
+                                        sx={{
+                                            width: "35px",
+                                            height: "35px",
+                                            border: "4px solid white"
+                                        }}
+                                        alt="Remy Sharp"
+                                        src={BackendLink + like.profile_picture}
+                                    />
+                                )
+                            })}
+                        </Box>
+                    }
+
+                    <Box
+                        sx={{
+                            ml: "23px",
+                            display: ["none", "none", "none", "block"]
+                        }}
                     >
-                        Gaelle, Rolf
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        fontSize="14px"
-                        color="#888da8"
-                        textAlign="left"
-                        mb="0"
-                        lineHeight="1.5"
-                    >
-                        and 31 more liked this
-                    </Typography>
-                </Box>
-            </Box>
+                        <Typography
+                            variant="subtitle1"
+                            gutterBottom
+                            fontSize="15px"
+                            color="black"
+                            textAlign="left"
+                            mb="0"
+                            lineHeight="1.5"
+                            fontWeight="700"
+                        >
+                            {Likes[0] && Likes[0].firstname} {Likes[0] && Likes[0].lastname}
+                            , {Likes[1] && Likes[1].firstname} {Likes[1] && Likes[1].lastname}
+                        </Typography>
+                        <Typography
+                            variant="subtitle1"
+                            gutterBottom
+                            fontSize="14px"
+                            color="#888da8"
+                            textAlign="left"
+                            mb="0"
+                            lineHeight="1.5"
+                        >
+                            and {Likes.slice(5).length} more liked this
+                        </Typography>
+                    </Box>
+                </Box> :
+                <Box></Box>
+            }
 
             <Box
                 sx={{
@@ -175,7 +137,7 @@ const PostFooter = () => {
                         ml="5px"
                         lineHeight="1.5"
                     >
-                        33
+                        {Likes.length}
                     </Typography>
                 </Box>
 
@@ -227,7 +189,7 @@ const PostFooter = () => {
                         ml="5px"
                         lineHeight="1.5"
                     >
-                        9
+                        {props.Comments.length}
                     </Typography>
                 </Box>
             </Box>

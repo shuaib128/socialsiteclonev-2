@@ -132,3 +132,7 @@ body img {
   height: 100%;
   border-radius: .75rem;
 }
+
+.glide__slide {
+  height: calc(100vh - 73px) !important;
+}

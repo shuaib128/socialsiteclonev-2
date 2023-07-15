@@ -42,7 +42,6 @@ export const transferFiles = async (setProgress) => {
                         "/api/posts/post/add/media/image/",
                         JSON.stringify(Data)
                     );
-                    console.log(response);
 
                     // After successfully uploading an image, update the progress
                     progressTracker.uploadedFiles++;

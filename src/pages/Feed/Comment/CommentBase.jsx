@@ -4,13 +4,16 @@ import Typography from '@mui/material/Typography';
 import { SecondBGColor } from '../../../Util/Colors/Colors';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Comments from './Comments';
+import Comment from './Comment';
 import CommentTextArea from './CommentTextArea';
 
 const CommentBase = (props) => {
+    const postComments = props.Post.comments
+    
     return (
         <>
             <Box
+                className={`comment-main-${props.Post.id}`}
                 sx={{
                     height: "75%",
                     overflowY: "scroll"
@@ -39,7 +42,7 @@ const CommentBase = (props) => {
                         textAlign="left"
                         mb="0"
                     >
-                        Comments (5)
+                        Comments ({postComments.length})
                     </Typography>
                     <IconButton
                         onClick={() => props.setOpenCommentSection(false)}
@@ -52,12 +55,15 @@ const CommentBase = (props) => {
                 </Box>
 
                 <Box sx={{ marginTop: "60px" }}>
-                    <Comments />
-                    <Comments />
-                    <Comments />
-                    <Comments />
-                    <Comments />
-                    <Comments />
+                    {postComments.map((comment, _) => {
+                        return (
+                            <Comment
+                                Post={props.Post}
+                                Comment={comment}
+                                key={comment.id}
+                            />
+                        )
+                    })}
                 </Box>
             </Box>
 
@@ -70,7 +76,13 @@ const CommentBase = (props) => {
                     margin: "16px"
                 }}
             >
-                <CommentTextArea />
+                <CommentTextArea
+                    ID={props.Post}
+                    Post={props.Post}
+                    ButtonText="post comment"
+                    PlaceholderText="Write a comment!"
+                    SubmitPath="/api/posts/post/add/comment/"
+                />
             </Box>
         </>
     )

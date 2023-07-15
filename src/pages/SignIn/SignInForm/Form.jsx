@@ -16,6 +16,7 @@ import { BackendLink } from '../../../Util/BackEndLink';
 import { Link } from 'react-router-dom';
 import { saveToken } from '../../../Util/Token/SaveToken';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 
 const Form = () => {
     /**Navigation */
@@ -26,6 +27,7 @@ const Form = () => {
     const [Password, setPassword] = useState("")
     const [LoadingData, setLoadingData] = useState(false)
 
+    const [LogingError, setLogingError] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event) => {
@@ -47,17 +49,24 @@ const Form = () => {
         };
 
         fetch(`${BackendLink}/api/users/user/token/`, requestOptions)
-            .then(response => response.text())
-            .then(result => {
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.text();
+                } else {
+                    setLogingError(true)
+                    setLoadingData(false);
+                    throw new Error('Invalid response status');
+                }
+            })
+            .then((result) => {
                 saveToken(result).then(() => {
                     /**After saving token redirect to homepage */
                     navigate("/")
-                })
-                setLoadingData(false)
+                });
+                setLoadingData(false);
             })
-            .catch(error => {
-                console.log('error', error)
-                setLoadingData(false)
+            .catch((error) => {
+                setLoadingData(false);
             });
     }
 
@@ -149,6 +158,11 @@ const Form = () => {
                     Forgot Password?
                 </Typography>
             </Box>
+
+            {LogingError ?
+                <Alert severity="warning">Username or Password invalid!</Alert> :
+                <span></span>
+            }
 
             <Box>
                 <ButtonOutLine
