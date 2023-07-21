@@ -3,15 +3,24 @@ import Box from '@mui/material/Box';
 import { imageOrVideo } from '../../../Util/ImageOrVideo/ImageOrVideo';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { BackendLink } from '../../../Util/BackEndLink';
 
 const Media = ({ Files, setPostContent }) => {
     /**Remove file on click */
-    const removeFileItem = (index) => {
+    const removeFileItem = (file, index) => {
         const newItems = Files.filter((_, i) => i !== index);
         setPostContent((prevState) => ({
             ...prevState,
             mediaFiles: newItems
         }));
+
+        /**Check if on the modyfy page */
+        if (file.id) {
+            setPostContent((prevState) => ({
+                ...prevState,
+                deleteImages: [...prevState.deleteImages, file.id]
+            }));
+        }
     }
 
     return (
@@ -25,7 +34,10 @@ const Media = ({ Files, setPostContent }) => {
             }}
         >
             {Files && Files.map((file, index) => {
-                if (imageOrVideo(file.name) === "image") {
+                const filename = file.name ? file.name : file.file
+                const filePath = file.name ? URL.createObjectURL(file) : BackendLink + file.file
+
+                if (imageOrVideo(filename) === "image") {
                     return (
                         <Box
                             key={index}
@@ -48,7 +60,7 @@ const Media = ({ Files, setPostContent }) => {
                                     }
                                 }}
                                 onClick={() => {
-                                    removeFileItem(index)
+                                    removeFileItem(file, index)
                                 }}
                             >
                                 <CloseIcon
@@ -60,7 +72,7 @@ const Media = ({ Files, setPostContent }) => {
                                 />
                             </IconButton>
                             <img
-                                src={URL.createObjectURL(file)}
+                                src={filePath}
                                 alt="prv-img"
                                 style={{
                                     width: "135px",
@@ -70,7 +82,7 @@ const Media = ({ Files, setPostContent }) => {
                             />
                         </Box>
                     )
-                } else if (imageOrVideo(file.name) === "video") {
+                } else if (imageOrVideo(filename) === "video") {
                     return (
                         <Box
                             key={index}
@@ -94,7 +106,7 @@ const Media = ({ Files, setPostContent }) => {
                                     }
                                 }}
                                 onClick={() => {
-                                    removeFileItem(index)
+                                    removeFileItem(file, index)
                                 }}
                             >
                                 <CloseIcon
@@ -113,7 +125,7 @@ const Media = ({ Files, setPostContent }) => {
                                     borderRadius: "0.5rem"
                                 }}
                             >
-                                <source src={URL.createObjectURL(file)} type={file.type} />
+                                <source src={filePath} />
                             </video>
                         </Box>
                     )

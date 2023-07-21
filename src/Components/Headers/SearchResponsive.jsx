@@ -6,7 +6,21 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 
-const SearchResponsive = ({ SearchButtonClicked, setSearchButtonClicked }) => {
+const SearchResponsive = ({
+    SearchQuery,
+    setSearchQuery,
+    SearchButtonClicked,
+    setSearchButtonClicked,
+    searchPageNavigate
+}) => {
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            // Enter key was pressed, perform the search or desired action
+            e.preventDefault();
+            searchPageNavigate();
+        }
+    };
+
     return (
         <Box>
             <Paper
@@ -30,6 +44,9 @@ const SearchResponsive = ({ SearchButtonClicked, setSearchButtonClicked }) => {
                 </IconButton>
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
+                    value={SearchQuery}
+                    onKeyDown={handleKeyDown}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search What You Want"
                     inputProps={{ 'aria-label': 'search what you want' }}
                 />

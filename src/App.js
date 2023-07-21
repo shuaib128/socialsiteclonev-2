@@ -15,6 +15,7 @@ import PostDetailBase from './pages/PostDetail/PostDetailBase';
 import ProfileBase from './pages/Profile/ProfileBase'
 import UserProfileBase from './pages/Profile/UserProfileBase';
 import PostEditBase from './pages/PostEdit/PostEditBase';
+import SearchPageBase from './pages/Search/SearchPageBase';
 
 function App() {
   /**Get the user */
@@ -34,6 +35,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/post/:id" element={<PostDetailBase />} />
+        <Route path="/post/search/:query" element={<SearchPageBase />} />
         <Route path="/post/edit/:id" element={<PostEditBase />} />
         <Route path="/profile/:id" element={<ProfileBase />} />
         <Route path="/profile" element={<UserProfileBase />} />

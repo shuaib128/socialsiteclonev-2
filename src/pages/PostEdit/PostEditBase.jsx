@@ -17,7 +17,6 @@ const PostEditBase = () => {
             setPost(post);
         })
     }, [])
-    console.log(Post);
 
     return (
         <Box

@@ -20,7 +20,7 @@ import { transformedData } from './transformData';
 
 let hasRunDuringThisSession = false;
 
-const PostCreateBase = () => {
+const PostCreateBase = ({ ExistingPost = {} }) => {
     /**Get the user */
     const dispatch = useDispatch();
     useEffect(() => {
@@ -42,11 +42,22 @@ const PostCreateBase = () => {
     const [PostContent, setPostContent] = useState({
         authorName: author.username,
         description: "",
-        mediaFiles: []
+        mediaFiles: [],
+        existingPostId: "",
+        deleteImages: []
     })
 
-    console.log(PostContent);
-
+    useEffect(() => {
+        if (ExistingPost.id) {
+            setPostContent((prevState) => ({
+                ...prevState,
+                authorName: author.username,
+                description: ExistingPost.description,
+                mediaFiles: ExistingPost.media_files,
+                existingPostId: ExistingPost.id,
+            }));
+        }
+    }, [ExistingPost])
 
     /**Update the username */
     useEffect(() => {

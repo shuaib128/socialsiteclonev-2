@@ -15,12 +15,22 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuBox from './Menu';
 import { useSelector } from 'react-redux';
 import { BackendLink } from '../../Util/BackEndLink';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    /**Navigation */
+    const navigate = useNavigate();
+
     /**Page Author */
     const author = useSelector(state => state.Author.Author)
     const [SearchButtonClicked, setSearchButtonClicked] = useState(false)
     let screenWidth = useWindowWidth()
+
+    /**Search Query */
+    const [SearchQuery, setSearchQuery] = useState("")
+    const searchPageNavigate = () => {
+        navigate(`/post/search/${SearchQuery}`);
+    }
 
     /**Menu stuff */
     const [anchorEl, setAnchorEl] = useState(null);
@@ -147,10 +157,17 @@ const Header = () => {
                 >
                     {
                         screenWidth > 850 ?
-                            <Search /> :
+                            <Search
+                                SearchQuery={SearchQuery}
+                                setSearchQuery={setSearchQuery}
+                                searchPageNavigate={searchPageNavigate}
+                            /> :
                             <SearchResponsive
+                                SearchQuery={SearchQuery}
+                                setSearchQuery={setSearchQuery}
                                 SearchButtonClicked={SearchButtonClicked}
                                 setSearchButtonClicked={setSearchButtonClicked}
+                                searchPageNavigate={searchPageNavigate}
                             />
                     }
                     <Box>

@@ -50,6 +50,7 @@ export const retrieveDataFromIndexedDB = async () => {
 
                 request.onsuccess = (event) => {
                     const data = event.target.result;
+                    console.log(data);
                     resolve(data);
                 };
 

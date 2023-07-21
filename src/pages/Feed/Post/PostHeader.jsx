@@ -55,6 +55,7 @@ export default function PostHeader(props) {
                 }}
             >
                 <Avatar
+                    onClick={() => userNameClickHandler()}
                     sx={{
                         width: "55px",
                         height: "55px",

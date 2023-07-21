@@ -1,2 +1,5 @@
-export const BackendLink = "http://127.0.0.1:8000"
-export const BackendLinkWebSocket = "ws://127.0.0.1:8000"
+// export const BackendLink = "http://localhost:8000"
+// export const BackendLinkWebSocket = "ws://localhost:8000"
+
+export const BackendLink = "https://web-production-4ceb.up.railway.app"
+export const BackendLinkWebSocket = "wss://web-production-4ceb.up.railway.app"
