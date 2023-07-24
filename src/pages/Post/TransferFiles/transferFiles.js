@@ -19,8 +19,8 @@ let progressTracker = {
 export const transferFiles = async (setProgress) => {
     try {
         const data = await retrieveDataFromIndexedDB();
-        console.log(data);
         const mediaFiles = data[0].files;
+        console.log(mediaFiles);
         const postID = data[1].post_id;
         const promises = [];
 

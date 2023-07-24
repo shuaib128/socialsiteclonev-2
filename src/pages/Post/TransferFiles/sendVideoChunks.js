@@ -38,7 +38,7 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
                 videoChunks.splice(i, 1);
                 i--;
 
-                modifyDataToIndexedDB(mediaFiles);
+                await modifyDataToIndexedDB(mediaFiles);
 
                 // After successfully uploading a chunk, update the progress
                 progressTracker.uploadedFiles++;

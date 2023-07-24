@@ -135,7 +135,7 @@ const PostCreateBase = ({ ExistingPost = {} }) => {
                     { id: 2, post_id: data.post_id },
                     { id: 3, author_username: author.username },
                 ];
-                storeDataInIndexedDB(mediaData)
+                await storeDataInIndexedDB(mediaData)
 
                 /**Clear the Mediastate */
                 setPostContent((prevState) => ({
@@ -145,14 +145,14 @@ const PostCreateBase = ({ ExistingPost = {} }) => {
                 }));
 
                 // Run transferFiles in the background
-                setTimeout(() => {
-                    transferFiles(setProgress)
-                        .then(() => {
-                            setUploadingPost(false)
-                        })
-                        .catch((error) => {
-                            // Handle any errors that occurred during the transfer
-                        });
+                setTimeout(async () => {
+                    try {
+                        await transferFiles(setProgress)
+                        setUploadingPost(false)
+                    } catch (error) {
+                        // Handle any errors that occurred during the transfer
+                        console.error(error);
+                    }
                 }, 0);
                 setTextAreaFocused(false)
                 setLoadingData(false)

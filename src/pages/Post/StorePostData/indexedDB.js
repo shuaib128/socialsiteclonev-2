@@ -1,6 +1,15 @@
 const dbName = 'postTempDataBase';
 const objectStoreName = 'postTempDataBaseObjectStore';
 
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
 const openDatabase = () => {
     return new Promise((resolve, reject) => {
         const request = window.indexedDB.open(dbName, 1);
@@ -25,15 +34,37 @@ const openDatabase = () => {
 
 export const storeDataInIndexedDB = async (data) => {
     try {
+        // Convert all Blob to Base64 upfront
+        for (const item of data) {
+            if (item.files) {
+                for (let file of item.files) {
+                    if (file.videoChunks) {
+                        for (let chunk of file.videoChunks) {
+                            if (chunk.chunk instanceof Blob) {
+                                chunk.chunk = await blobToBase64(chunk.chunk);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Now create the transaction and store data
         const db = await openDatabase();
         const transaction = db.transaction(objectStoreName, 'readwrite');
         const objectStore = transaction.objectStore(objectStoreName);
 
+        // use put instead of add to allow updates as well as inserts
         for (const item of data) {
-            objectStore.add(item);
+            objectStore.put(item);
         }
 
-        transaction.oncomplete = () => {};
+        transaction.oncomplete = () => {
+            console.log("Transaction completed");
+        };
+        transaction.onerror = () => {
+            console.log("Transaction not completed:", transaction.error);
+        };
     } catch (error) {
         console.error('Data storage error:', error);
     }
@@ -49,8 +80,7 @@ export const retrieveDataFromIndexedDB = async () => {
                 const request = objectStore.getAll();
 
                 request.onsuccess = (event) => {
-                    const data = event.target.result;
-                    console.log(data);
+                    let data = event.target.result;
                     resolve(data);
                 };
 
@@ -68,6 +98,16 @@ export const retrieveDataFromIndexedDB = async () => {
 
 export const modifyDataToIndexedDB = async (data) => {
     const db = await openDatabase();
+
+    // Convert all Blob to Base64 upfront
+    if (data[0].videoChunks) {
+        // Make sure all chunks are converted to base64 before proceeding
+        await Promise.all(data[0].videoChunks.map(async (chunk) => {
+            if (chunk.chunk instanceof Blob) {
+                chunk.chunk = await blobToBase64(chunk.chunk);
+            }
+        }));
+    }
 
     // Start a transaction and get a reference to the object store
     const transaction = db.transaction(objectStoreName, 'readwrite');
@@ -94,10 +134,11 @@ export const modifyDataToIndexedDB = async (data) => {
             console.error('Failed to update object:', event.target.error);
         };
 
-        updateObjectRequest.onsuccess = (event) => {};
+        updateObjectRequest.onsuccess = (event) => {
+            console.log("Object updated successfully");
+        };
     }
 }
-
 export const clearDataFromIndexedDB = async () => {
     try {
         const db = await openDatabase();
@@ -105,7 +146,7 @@ export const clearDataFromIndexedDB = async () => {
         const objectStore = transaction.objectStore(objectStoreName);
         const request = objectStore.clear();
 
-        request.onsuccess = () => {};
+        request.onsuccess = () => { };
     } catch (error) {
         console.error('Data clearing error:', error);
     }
