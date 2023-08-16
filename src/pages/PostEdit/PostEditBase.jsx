@@ -6,8 +6,14 @@ import { useParams } from 'react-router-dom';
 import Header from '../../Components/Headers/Header';
 import { MainBGColor } from '../../Util/Colors/Colors';
 import PostCreateBase from '../Post/PostCreate/PostCreateBase';
+import ButtonOutLine from '../../Components/Buttons/ButtonOutLine';
+import { useNavigate } from 'react-router-dom';
 
 const PostEditBase = () => {
+    /**Navigation */
+    const navigate = useNavigate();
+
+    const [Loading, setLoading] = useState(false)
     const { id } = useParams()
     const [Post, setPost] = useState()
 
@@ -17,6 +23,17 @@ const PostEditBase = () => {
             setPost(post);
         })
     }, [])
+
+    /**Delete click handler */
+    const DeletePostClickhandler = () => {
+        setLoading(true)
+        FetchData(`/api/posts/post/delete/${id}`).then((post) => {
+            if(post === "200") {
+                navigate("/");
+            }
+            setLoading(false)
+        })
+    }
 
     return (
         <Box
@@ -35,9 +52,24 @@ const PostEditBase = () => {
                     paddingBottom: "40px"
                 }}
             >
-                <PostCreateBase 
+                <PostCreateBase
                     ExistingPost={Post}
                 />
+
+                <Box
+                    sx={{
+                        width: "100px"
+                    }}
+                >
+                    <ButtonOutLine
+                        ButtonText="Delete"
+                        ButtonHeight="40px"
+                        OnClickHandler={DeletePostClickhandler}
+                        varient="contained"
+                        IsLoading={Loading}
+                        marginTop="0px"
+                    />
+                </Box>
             </Container>
         </Box>
     )

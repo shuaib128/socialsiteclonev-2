@@ -11,6 +11,7 @@ import ProfileInfoBase from './ProfileInfo/ProfileInfoBase';
 import PostBase from '../Feed/Post/PostBase';
 import { PostsSocket } from '../../Util/Socket/PostsSocket';
 import FilterBase from './PostFilter/FilterBase';
+import PostSkeleton from '../../Components/Skeleton/PostSkeleton';
 
 const UserProfileBase = () => {
     const [Posts, setPosts] = useState({})
@@ -67,37 +68,44 @@ const UserProfileBase = () => {
 
                 <Box
                     sx={{
-                        display: "flex",
+                        display: ["block", "block", "flex", "flex"],
                         gap: "30px"
                     }}
                 >
                     <Box
                         sx={{
-                            width: "30%"
+                            width: ["100%", "100%", "30%", "30%"]
                         }}
                     >
                         <ProfileInfoBase
                             Author={author}
                         />
                     </Box>
-
-                    <Box
-                        className="profile-posts"
-                        sx={{
-                            width: "70%"
-                        }}
-                    >
-                        <FilterBase />
-                        {Object.values(Posts).map((post, index) => {
-                            return (
-                                <PostBase
-                                    key={index}
-                                    Post={post}
-                                    Author={author}
-                                />
-                            )
-                        })}
-                    </Box>
+                    {Object.values(Posts).length !== 0 ?
+                        <Box
+                            className="profile-posts"
+                            sx={{
+                                width: ["100%", "100%", "70%", "70%"]
+                            }}
+                        >
+                            {/* <FilterBase /> */}
+                            {Object.values(Posts).map((post, index) => {
+                                return (
+                                    <PostBase
+                                        key={index}
+                                        Post={post}
+                                        Author={author}
+                                    />
+                                )
+                            })}
+                        </Box> :
+                        <Box
+                            sx={{ width: "100%" }}
+                        >
+                            <PostSkeleton />
+                            <PostSkeleton />
+                        </Box>
+                    }
                 </Box>
             </Container>
         </Box>

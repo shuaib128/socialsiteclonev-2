@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { transformedData } from './transformData';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
@@ -16,7 +17,6 @@ import PostData from '../../../Util/Data/PostData';
 import { getAuthor } from '../../../Redux/Author/AuthorActions';
 import { transferFiles } from '../TransferFiles/transferFiles';
 import { storeDataInIndexedDB, retrieveDataFromIndexedDB } from '../StorePostData/indexedDB';
-import { transformedData } from './transformData';
 
 let hasRunDuringThisSession = false;
 
@@ -88,6 +88,7 @@ const PostCreateBase = ({ ExistingPost = {} }) => {
             retrieveDataFromIndexedDB()
                 .then((data) => {
                     if (data.length) {
+                        console.log("running");
                         // Run transferFiles in the background
                         setTimeout(() => {
                             transferFiles(setProgress)

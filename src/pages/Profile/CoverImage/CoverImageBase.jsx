@@ -5,11 +5,49 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
 import { BackendLink } from '../../../Util/BackEndLink';
+import { resizeImageFile } from '../../../Util/Compression/imageCompress';
+import PostData from '../../../Util/Data/PostData';
+import { useDispatch } from 'react-redux';
+import { getAuthor } from '../../../Redux/Author/AuthorActions';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 const CoverImageBase = ({ Author, CoverImage }) => {
+    const dispatch = useDispatch();
     const author = useSelector(state => state.Author.Author)
     const isAuthor = author.id === Author.id
     const [Hovering, setHovering] = useState(false)
+    const [LoadingImageUpload, setLoadingImageUpload] = useState(false)
+
+    /**Handle Avatar cover image uplaod */
+    const handleAvatarCoverUploadClick = async (e) => {
+        setLoadingImageUpload(true)
+        const file = e.target.files[0];
+        const resizedFile = await resizeImageFile(file, 840, 680);
+
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(resizedFile);
+
+        fileReader.addEventListener('load', (event) => {
+            const dataUrl = event.target.result;
+
+            const DATA = {
+                userID: author.id,
+                cover_image: dataUrl,
+            };
+
+            /**hndle the submit for the like button */
+            PostData(
+                "POST",
+                "/api/users/author/update/",
+                JSON.stringify(DATA)
+            ).then((data) => {
+                console.log(data);
+                dispatch(getAuthor(data.user))
+
+                setLoadingImageUpload(false)
+            })
+        });
+    }
 
     return (
         <Box
@@ -25,9 +63,7 @@ const CoverImageBase = ({ Author, CoverImage }) => {
                     onMouseLeave={() => setHovering(false)}
                     type="button"
                     sx={{
-                        color: "#757a91",
                         transition: "all 0.3s",
-                        transition: "all .3s",
                         borderRadius: 0,
                         color: "white",
                         position: "absolute",
@@ -37,12 +73,21 @@ const CoverImageBase = ({ Author, CoverImage }) => {
                         zIndex: 1
                     }}
                 >
-                    <CameraAltIcon
-                        sx={{
-                            color: "white",
-                            fontSize: "23px"
-                        }}
-                    />
+                    {LoadingImageUpload ?
+                        <HourglassBottomIcon
+                            sx={{
+                                color: "white",
+                                fontSize: "23px",
+                                position: "relative"
+                            }}
+                        /> :
+                        <CameraAltIcon
+                            sx={{
+                                color: "white",
+                                fontSize: "23px"
+                            }}
+                        />
+                    }
 
                     <Typography
                         ml={1}
@@ -50,8 +95,23 @@ const CoverImageBase = ({ Author, CoverImage }) => {
                         variant="body2"
                         gutterBottom
                     >
-                        Edit cover image
+                        {!LoadingImageUpload ? "Edit cover image" : "Uploading cover image"}
                     </Typography>
+                    {!LoadingImageUpload ?
+                        <input
+                            onChange={handleAvatarCoverUploadClick}
+                            type="file"
+                            id="avatarInput"
+                            accept="image/*"
+                            style={{
+                                position: "absolute",
+                                width: "100%",
+                                cursor: "pointer",
+                                opacity: 0
+                            }}
+                        /> :
+                        <Box></Box>
+                    }
                 </IconButton> :
                 <Box></Box>
             }
@@ -72,10 +132,10 @@ const CoverImageBase = ({ Author, CoverImage }) => {
 
             <img
                 style={{
-                    objectPosition: "top"
+                    objectPosition: "center"
                 }}
                 src={BackendLink + CoverImage}
-                alt='cover-photo'
+                alt='cover'
             />
         </Box>
     )

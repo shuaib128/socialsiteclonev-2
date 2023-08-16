@@ -13,6 +13,7 @@ import PostBase from './Post/PostBase';
 import FetchData from '../../Util/Data/FetchData';
 import { useSelector } from 'react-redux';
 import { PostsSocket } from '../../Util/Socket/PostsSocket';
+import PostSkeleton from '../../Components/Skeleton/PostSkeleton';
 
 const FeedPage = () => {
     /**Page Author */
@@ -52,7 +53,9 @@ const FeedPage = () => {
             /**get the post id and put it in PostsIds */
             setPostIds(prevPostIds => {
                 const prevPostIdsSet = new Set(prevPostIds);
-                const uniqueNewIds = newPostIds.filter(id => !prevPostIdsSet.has(id));
+                const uniqueNewIds = newPostIds.filter(
+                    id => !prevPostIdsSet.has(id)
+                );
                 return [...prevPostIds, ...uniqueNewIds];
             });
             setLoading(false);
@@ -113,27 +116,35 @@ const FeedPage = () => {
                 >
                     <PostCreateBase />
 
-                    {postIds.map((id, index) => {
-                        const post = Posts[id];
-                        if (postIds.length === index + 1) {
-                            return (
-                                <PostBase
-                                    ref={lastPostElementRef}
-                                    key={index}
-                                    Post={post}
-                                    Author={author}
-                                />
-                            )
-                        } else {
-                            return (
-                                <PostBase
-                                    key={index}
-                                    Post={post}
-                                    Author={author}
-                                />
-                            )
-                        }
-                    })}
+                    {Object.keys(Posts).length !== 0 ?
+                        <>
+                            {postIds.map((id, index) => {
+                                const post = Posts[id];
+                                if (postIds.length === index + 1) {
+                                    return (
+                                        <PostBase
+                                            ref={lastPostElementRef}
+                                            key={index}
+                                            Post={post}
+                                            Author={author}
+                                        />
+                                    )
+                                } else {
+                                    return (
+                                        <PostBase
+                                            key={index}
+                                            Post={post}
+                                            Author={author}
+                                        />
+                                    )
+                                }
+                            })}
+                        </> :
+                        <Box>
+                            <PostSkeleton />
+                            <PostSkeleton />
+                        </Box>
+                    }
                 </Box>
 
                 <Box

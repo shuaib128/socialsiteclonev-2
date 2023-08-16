@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import LinearWithValueLabel from './Progress'
 import ButtonOutLine from '../../../../Components/Buttons/ButtonOutLine';
 
-const PostUploadingProgress = ({Progress}) => {
+const PostUploadingProgress = ({ Progress }) => {
     const cancelButtonHandler = () => {
     }
 

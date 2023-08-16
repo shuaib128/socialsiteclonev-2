@@ -17,6 +17,7 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
     const filename = file.filename;
 
     for (let i = 0; i < videoChunks.length; i++) {
+        console.log(videoChunks)
         const chunk = videoChunks[i].chunk;
         const formData = new FormData();
         formData.append('filename', filename);
@@ -38,6 +39,7 @@ export const sendVideoChunks = async (postID, resolve, file, mediaFiles, progres
                 videoChunks.splice(i, 1);
                 i--;
 
+                console.log(mediaFiles)
                 await modifyDataToIndexedDB(mediaFiles);
 
                 // After successfully uploading a chunk, update the progress

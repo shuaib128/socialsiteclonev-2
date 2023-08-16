@@ -73,7 +73,14 @@ export const transferFiles = async (setProgress) => {
             } else if (file.type === "vid") {
                 promises.push(
                     new Promise((resolve) => {
-                        sendVideoChunks(postID, resolve, file, mediaFiles, progressTracker, setProgress);
+                        sendVideoChunks(
+                            postID,
+                            resolve,
+                            file,
+                            mediaFiles,
+                            progressTracker,
+                            setProgress
+                        );
                     })
                 );
             }

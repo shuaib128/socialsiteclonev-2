@@ -4,7 +4,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import LogOut from '../../Util/Data/Logout';
@@ -57,12 +56,6 @@ const MenuBox = (props) => {
                 <Avatar /> Profile
             </MenuItem>
             <Divider />
-            <MenuItem onClick={props.handleClose}>
-                <ListItemIcon>
-                    <Settings fontSize="small" />
-                </ListItemIcon>
-                Settings
-            </MenuItem>
             <MenuItem onClick={() => {
                 props.handleClose()
 

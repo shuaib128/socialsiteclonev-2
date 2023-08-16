@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { MainBGColor } from '../../Util/Colors/Colors';
 import PostBase from '../Feed/Post/PostBase';
 import { PostsSocket } from '../../Util/Socket/PostsSocket';
+import PostSkeleton from '../../Components/Skeleton/PostSkeleton';
+
 
 const SearchPageBase = () => {
     /**Page Author */
@@ -48,22 +50,29 @@ const SearchPageBase = () => {
                     paddingBottom: "40px"
                 }}
             >
-                <Box
-                    sx={{
-                        margin: "0 auto",
-                        width: ["100%", "100%", "80%", "80%"]
-                    }}
-                >
-                    {Object.values(Posts).map((post, index) => {
-                        return (
-                            <PostBase
-                                key={index}
-                                Post={post}
-                                Author={author}
-                            />
-                        )
-                    })}
-                </Box>
+                {Object.values(Posts).length !== 0 ?
+                    <Box
+                        sx={{
+                            margin: "0 auto",
+                            width: ["100%", "100%", "80%", "80%"]
+                        }}
+                    >
+                        {Object.values(Posts).map((post, index) => {
+                            return (
+                                <PostBase
+                                    key={index}
+                                    Post={post}
+                                    Author={author}
+                                />
+                            )
+                        })}
+                    </Box> :
+                    <Box>
+                        <PostSkeleton />
+                        <PostSkeleton />
+                    </Box>
+                }
+
             </Container>
         </Box>
     )
