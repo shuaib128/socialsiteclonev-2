@@ -1,70 +1,55 @@
-# Getting Started with Create React App
+# React Frontend for Social Media Clone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository holds the frontend of our social media clone application. Built using the React.js framework, it mirrors familiar features found in mainstream social media platforms with a custom touch. It interacts seamlessly with our Django backend, creating an integrated and interactive experience.
 
-## Available Scripts
+![Cover Photo](./ReadmeImages/cover.png)
 
-In the project directory, you can run:
+## Key Features:
 
-### `yarn start`
+1. **User Interactivity**:
+   - Users can create, edit, and delete posts.
+   - Intuitive interfaces for liking posts, adding comments, and replying to comments.
+2. **Adaptive Video Playback**:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+   - Leveraging the HLS protocol, users can upload and stream videos adaptively. The video quality adjusts automatically based on the viewer's network conditions.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. **Responsive UI**:
+   - A clean and modern design optimized for desktop, tablet, and mobile users.
+4. **Real-time Feedback**:
+   - Instant notifications and updates after interactions like posting or commenting, giving users a dynamic experience.
 
-### `yarn test`
+## Technology Stack:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **React.js**: Employs a component-based architecture, ideal for creating modular and reusable UI components.
+- **Axios**: For HTTP requests, ensuring effective communication with our Django backend.
+- **Yarn**: As the preferred package manager and task runner.
+- **Redux (Optional)**: If used, provides efficient state management across React components.
 
-### `yarn build`
+## Getting Started:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Prerequisites**:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   - Ensure Node.js and Yarn are installed.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Installation**:
 
-### `yarn eject`
+   ```bash
+   # Clone the repository
+   git clone <repository-url>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   # Navigate into the project directory
+   cd <project-directory-name>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   # Install dependencies via Yarn
+   yarn install
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   # Launch the development server
+   yarn start
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. **Browser Access**:
+   - The app should now be live at `http://localhost:3000`.
 
-## Learn More
+## Feedback & Contributions:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Your feedback and contributions to this project are invaluable. Please feel free to open issues or propose changes via pull requests.
